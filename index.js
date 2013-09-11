@@ -15,7 +15,7 @@ function main() {
         var result = {};
 
         for(var model in d[0]) {
-            var bands = d[0][model].bands;
+            var bands = d[0][model];
             result[model] = {};
 
             for(var country in d[1]) {
@@ -102,9 +102,7 @@ function scrapeLte(data) {
                 })
             }).filter(id);
 
-            ret[name] = {
-                bands: bands
-            };
+            ret[name] = bands[0];
         });
     }).filter(prop('length'));
 
