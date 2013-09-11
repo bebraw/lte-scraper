@@ -74,7 +74,7 @@ function scrapeLteNetworks(data) {
                 else band = text;
             }
             if(i == 5) {
-                if(text.indexOf('(planned)') >= 0 || text.indexOf('(in Trial)') >= 0) band = null;
+                if(text.indexOf('(planned)') >= 0) band = null;
             }
         });
 
