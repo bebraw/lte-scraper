@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 var fs = require('fs');
 
+var is = require('annois');
 var async = require('async');
 var cheerio = require('cheerio');
 
@@ -10,7 +11,7 @@ main();
 function main() {
     async.parallel([lte, lteNetworks], function(err, d) {
         if(err) return console.error(err);
-        
+
         var result = {};
 
         for(var model in d[0]) {
@@ -69,14 +70,20 @@ function scrapeLteNetworks(data) {
             else text = $(td).text();
 
             if(i == 1) name = text.trim();
-            if(i == 3 && text.indexOf('?') == -1 && text.indexOf('N/A') == -1) band = text;
+            if(i == 3 && text.indexOf('?') == -1 && text.indexOf('N/A') == -1) {
+                if(text.indexOf('or') >= 0) band = text.split(' or ');
+                else band = text;
+            }
             if(i == 5) {
                 if(text == '2013 (planned)' || text == '2013 (in Trial)') band = null;
             }
         });
 
         if(!(name in ret)) ret[name] = [];
-        if(band && ret[name].indexOf(band) == -1) ret[name].push(band);
+        if(band && ret[name].indexOf(band) == -1) {
+            if(is.array(band)) ret[name] = ret[name].concat(band);
+            else ret[name].push(band);
+        }
         if(!ret[name].length) delete ret[name];
     });
 
