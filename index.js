@@ -15,7 +15,7 @@ function main() {
 
         var d = scrapeLte(data);
 
-        console.log(d);
+        console.log(prettyJSON(d));
     });
 }
 
@@ -32,11 +32,18 @@ function scrapeLte(data) {
                 })
             }).filter(id);
 
-            ret[name] = bands;
+            ret[name] = {
+                bands: bands
+            };
         });
     }).filter(prop('length'));
 
     return ret;
+}
+
+// http://stackoverflow.com/questions/7428235/how-to-print-json-object-content-in-node-js
+function prettyJSON(obj) {
+    console.log(JSON.stringify(obj, null, 4));
 }
 
 function id(a) {return a;}
