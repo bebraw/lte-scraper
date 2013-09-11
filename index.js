@@ -22,7 +22,7 @@ function main() {
                 var b = d[1][country];
 
                 b.forEach(function(v) {
-                    if(bands.indexOf(v)) {
+                    if(bands.indexOf(v) >= 0) {
                         if(!(country in result[model])) result[model][country] = [];
                         if(result[model][country].indexOf(v) == -1) result[model][country].push(v);
                     }
