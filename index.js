@@ -8,23 +8,49 @@ var cheerio = require('cheerio');
 main();
 
 function main() {
-    /*fs.readFile('lte.html', {
+    async.parallel([lte, lteNetworks], function(err, d) {
+        if(err) return console.error(err);
+        
+        var result = {};
+
+        for(var model in d[0]) {
+            var bands = d[0][model].bands;
+            result[model] = {};
+
+            for(var country in d[1]) {
+                var b = d[1][country];
+
+                b.forEach(function(v) {
+                    if(bands.indexOf(v)) {
+                        if(!(country in result[model])) result[model][country] = [];
+
+                        result[model][country].push(v);
+                    }
+                });
+            }
+        }
+
+        prettyJSON(result);
+    });
+}
+
+function lte(cb) {
+    fs.readFile('lte.html', {
         encoding: 'utf8'
     }, function(err, data) {
-        if(err) return console.error(err);
+        if(err) return cb(err);
 
-        var d = scrapeLte(data);
+        cb(null, scrapeLte(data));
+    });
+}
 
-        prettyJSON(d);
-    });*/
+function lteNetworks(cb) {
     fs.readFile('lte_networks.html', {
         encoding: 'utf8'
     }, function(err, data) {
-        if(err) return console.error(err);
+        if(err) return cb(err);
 
-        var d = scrapeLteNetworks(data);
-
-        prettyJSON(d);
+        cb(null, scrapeLteNetworks(data));
     });
 }
 
