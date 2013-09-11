@@ -23,17 +23,23 @@ function scrapeLte(data) {
     var ret = {};
     var $ = cheerio.load(data);
 
-    $('.lte-chart tr').each(function(i, el) {
-        return $('.selfclear em', $(el)).each(function(i, el) {
-            var name = $(el).text().split(' ').slice(1).join('');
+    $('.lte-chart tr').each(function(i, tr) {
+        return $('.selfclear em', $(tr)).each(function(i, em) {
+            var name = $(em).text().split(' ').slice(1).join('');
+            var bands = $('td', $(tr)).map(function(i, td) {
+                if(i == 1) return $('h4', $(td)).map(function(i, h4) {
+                    return $(h4).text().split(' ')[0];
+                })
+            }).filter(id);
 
-            ret[name] = false;
+            ret[name] = bands;
         });
     }).filter(prop('length'));
 
     return ret;
 }
 
+function id(a) {return a;}
 function prop(name) {
     return function(v) {
         return v[name];
