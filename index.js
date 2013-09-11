@@ -68,7 +68,7 @@ function scrapeLteNetworks(data) {
             if(itext) text = itext;
             else text = $(td).text();
 
-            if(i == 1) name = text;
+            if(i == 1) name = text.trim();
             if(i == 3 && text.indexOf('?') == -1 && text.indexOf('N/A') == -1) band = text;
             if(i == 5) {
                 if(text == '2013 (planned)' || text == '2013 (in Trial)') band = null;
