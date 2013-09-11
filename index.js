@@ -24,8 +24,7 @@ function main() {
                 b.forEach(function(v) {
                     if(bands.indexOf(v)) {
                         if(!(country in result[model])) result[model][country] = [];
-
-                        result[model][country].push(v);
+                        if(result[model][country].indexOf(v) == -1) result[model][country].push(v);
                     }
                 });
             }
