@@ -70,7 +70,7 @@ function scrapeLteNetworks(data) {
 
             if(i == 1) name = text.trim();
             if(i == 3 && text.indexOf('?') == -1 && text.indexOf('N/A') == -1) {
-                if(text.indexOf('or') >= 0) band = text.split(' or ');
+                if(text.indexOf(' or ') >= 0) band = text.split(' or ');
                 else band = text;
             }
             if(i == 5) {
