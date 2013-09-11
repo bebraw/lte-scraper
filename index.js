@@ -20,9 +20,22 @@ function main() {
 }
 
 function scrapeLte(data) {
+    var ret = {};
     var $ = cheerio.load(data);
 
-    return $('.lte-chart tr .selfclear em').map(function(i, el) {
-        return $(el).text().split(' ').slice(1).join('');
-    });
+    $('.lte-chart tr').each(function(i, el) {
+        return $('.selfclear em', $(el)).each(function(i, el) {
+            var name = $(el).text().split(' ').slice(1).join('');
+
+            ret[name] = false;
+        });
+    }).filter(prop('length'));
+
+    return ret;
+}
+
+function prop(name) {
+    return function(v) {
+        return v[name];
+    };
 }
