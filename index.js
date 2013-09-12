@@ -4,7 +4,7 @@ var fs = require('fs');
 var is = require('annois');
 var async = require('async');
 var cheerio = require('cheerio');
-var countries = require('country');
+var countries = require('country-data').countries;
 
 
 main();
@@ -23,14 +23,14 @@ function main() {
                 var b = d[1][country];
                 var countryCode;
 
-                if(country == 'Bolivia') country = 'Bolivia, Plurinational State of';
-                if(country == 'Tanzania') country = 'Tanzania, United Republic of';
-                if(country == 'Venezuela') country = 'Venezuela, Bolivarian Republic of';
-                if(country == 'U.S. Virgin Islands') country = 'Virgin Islands, U.S.';
-                if(country == 'South Korea') country = 'Korea, Republic of';
+                if(country == 'Bolivia') country = 'Bolivia, Plurinational State Of';
+                if(country == 'Tanzania') country = 'Tanzania, United Republic Of';
+                if(country == 'Venezuela') country = 'Venezuela, Bolivarian Republic Of';
+                if(country == 'U.S. Virgin Islands') country = 'Virgin Islands (US)';
+                if(country == 'South Korea') country = 'Korea, Republic Of';
                 if(country == 'Russia') country = 'Russian Federation';
 
-                countryCode = countries[country];
+                countryCode = findCountryCode(country);
 
                 if(!countryCode) {
                     console.warn('Missing country code for ' + country);
@@ -48,6 +48,16 @@ function main() {
 
         prettyJSON(result);
     });
+}
+
+function findCountryCode(name) {
+    for(var code in countries) {
+        var country = countries[code];
+
+        if(country.name == name && code) return country.alpha3;
+    }
+
+    if(name == 'United Kingdom') return 'GBR';
 }
 
 function lte(cb) {
