@@ -4,6 +4,7 @@ var fs = require('fs');
 var is = require('annois');
 var async = require('async');
 var cheerio = require('cheerio');
+var countries = require('country');
 
 
 main();
@@ -20,13 +21,28 @@ function main() {
 
             for(var country in d[1]) {
                 var b = d[1][country];
+                var countryCode;
 
-                b.forEach(function(v) {
-                    if(bands.indexOf(v) >= 0) {
-                        if(!(country in result[model])) result[model][country] = [];
-                        if(result[model][country].indexOf(v) == -1) result[model][country].push(v);
-                    }
-                });
+                if(country == 'Bolivia') country = 'Bolivia, Plurinational State of';
+                if(country == 'Tanzania') country = 'Tanzania, United Republic of';
+                if(country == 'Venezuela') country = 'Venezuela, Bolivarian Republic of';
+                if(country == 'U.S. Virgin Islands') country = 'Virgin Islands, U.S.';
+                if(country == 'South Korea') country = 'Korea, Republic of';
+                if(country == 'Russia') country = 'Russian Federation';
+
+                countryCode = countries[country];
+
+                if(!countryCode) {
+                    console.warn('Missing country code for ' + country);
+                }
+                else {
+                    b.forEach(function(v) {
+                        if(bands.indexOf(v) >= 0) {
+                            if(!(countryCode in result[model])) result[model][countryCode] = [];
+                            if(result[model][countryCode].indexOf(v) == -1) result[model][countryCode].push(v);
+                        }
+                    });
+                }
             }
         }
 
