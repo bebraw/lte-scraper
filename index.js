@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 var async = require('async');
 
-var lte = require('./lte');
-var lteNetworks = require('./lte_networks');
+var lte = require('./lib/lte');
+var lteNetworks = require('./lib/lte_networks');
 
-var utils = require('./utils');
+var utils = require('./lib/utils');
 var prettyJSON = utils.prettyJSON;
 var read = utils.read;
 var findAlpha3 = utils.findAlpha3;
