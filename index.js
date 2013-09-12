@@ -23,7 +23,7 @@ function main() {
 
         for(var model in d[0]) {
             var bands = d[0][model];
-            result[model] = {};
+            result[model] = [];
 
             for(var country in d[1]) {
                 var b = d[1][country];
@@ -43,9 +43,8 @@ function main() {
                 }
                 else {
                     b.forEach(function(v) {
-                        if(bands.indexOf(v) >= 0) {
-                            if(!(countryCode in result[model])) result[model][countryCode] = [];
-                            if(result[model][countryCode].indexOf(v) == -1) result[model][countryCode].push(v);
+                        if(bands.indexOf(v) >= 0 && result[model].indexOf(countryCode) == -1) {
+                            result[model].push(countryCode);
                         }
                     });
                 }
