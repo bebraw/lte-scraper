@@ -1,16 +1,22 @@
 #!/usr/bin/env node
-var fs = require('fs');
-
-var is = require('annois');
 var async = require('async');
-var cheerio = require('cheerio');
-var countries = require('country-data').countries;
+
+var lte = require('./lte');
+var lteNetworks = require('./lte_networks');
+
+var utils = require('./utils');
+var prettyJSON = utils.prettyJSON;
+var read = utils.read;
+var findAlpha3 = utils.findAlpha3;
 
 
 main();
 
 function main() {
-    async.parallel([lte, lteNetworks], function(err, d) {
+    async.parallel([
+        read.bind(null, 'lte.html', lte),
+        read.bind(null, 'lte_networks.html', lteNetworks)
+    ], function(err, d) {
         if(err) return console.error(err);
 
         var result = {};
@@ -30,7 +36,7 @@ function main() {
                 if(country == 'South Korea') country = 'Korea, Republic Of';
                 if(country == 'Russia') country = 'Russian Federation';
 
-                countryCode = findCountryCode(country);
+                countryCode = findAlpha3(country);
 
                 if(!countryCode) {
                     console.warn('Missing country code for ' + country);
@@ -48,101 +54,4 @@ function main() {
 
         prettyJSON(result);
     });
-}
-
-function findCountryCode(name) {
-    for(var code in countries) {
-        var country = countries[code];
-
-        if(country.name == name && code) return country.alpha3;
-    }
-
-    if(name == 'United Kingdom') return 'GBR';
-}
-
-function lte(cb) {
-    fs.readFile('lte.html', {
-        encoding: 'utf8'
-    }, function(err, data) {
-        if(err) return cb(err);
-
-        cb(null, scrapeLte(data));
-    });
-}
-
-function lteNetworks(cb) {
-    fs.readFile('lte_networks.html', {
-        encoding: 'utf8'
-    }, function(err, data) {
-        if(err) return cb(err);
-
-        cb(null, scrapeLteNetworks(data));
-    });
-}
-
-function scrapeLteNetworks(data) {
-    var ret = {};
-    var $ = cheerio.load(data);
-
-    $('.wikitable tr').each(function(i, tr) {
-        var name, band;
-
-        if(i > 0) $('td', $(tr)).each(function(i, td) {
-            var itext = $('i', $(td)).text();
-            var text;
-
-            if(itext) text = itext;
-            else text = $(td).text();
-
-            if(i == 1) name = text.trim();
-            if(i == 3 && text.indexOf('?') == -1 && text.indexOf('N/A') == -1) {
-                if(text.indexOf(' or ') >= 0) band = text.split(' or ');
-                else band = text;
-            }
-            if(i == 5) {
-                if(text.indexOf('(planned)') >= 0) band = null;
-            }
-        });
-
-        if(!(name in ret)) ret[name] = [];
-        if(band && ret[name].indexOf(band) == -1) {
-            if(is.array(band)) ret[name] = ret[name].concat(band);
-            else ret[name].push(band);
-        }
-        if(!ret[name].length) delete ret[name];
-    });
-
-    return ret;
-}
-
-function scrapeLte(data) {
-    var ret = {};
-    var $ = cheerio.load(data);
-
-    $('.lte-chart tr').each(function(i, tr) {
-        $('.selfclear em', $(tr)).each(function(i, em) {
-            var name = $(em).text().split(' ').slice(1).join('');
-            var bands = $('td', $(tr)).map(function(i, td) {
-                if(i == 1) return $('h4', $(td)).map(function(i, h4) {
-                    return $(h4).text().split(' ')[0];
-                })
-            }).filter(id);
-
-            ret[name] = bands[0];
-        });
-    }).filter(prop('length'));
-
-    return ret;
-}
-
-// http://stackoverflow.com/questions/7428235/how-to-print-json-object-content-in-node-js
-function prettyJSON(obj) {
-    console.log(JSON.stringify(obj, null, 4));
-}
-
-function id(a) {return a;}
-function prop(name) {
-    return function(v) {
-        return v[name];
-    };
 }
