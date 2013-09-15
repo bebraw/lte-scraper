@@ -12,10 +12,10 @@
   "author": "Juho Vepsalainen",
   "license": "MIT",
   "dependencies": {
-    "request": "~2.27.0",
-    "cheerio": "~0.12.2",
-    "async": "~0.2.9",
-    "annois": "~0.3.0",
-    "country-data": "0.0.6"
+    "request": "2.27.0",
+    "cheerio": "0.12.2",
+    "async": "0.2.9",
+    "annois": "0.3.0",
+    "country-data": "0.0.7"
   }
 }
